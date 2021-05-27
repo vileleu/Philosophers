@@ -33,35 +33,35 @@ FLAGS		= -Wall -Wextra -Werror
 			@gcc ${FLAGS} ${HEADERS} -c $< -o ${<:.c=.o} > /dev/null
 
 ${NAME}:	${OBJS_ONE} ${OBJS_TWO} ${OBJS_THREE}
-			@echo "$(BLUE)"
-			@echo "$(BLUE)Compiling files..."
+			@printf "\n$(BLUE)"
+			@printf "$(BLUE)Compiling files..."
 			@gcc ${FLAGS} ${OBJS_ONE} -o philo_one -lpthread
-			@echo "$(GREEN)[philo_one done][✔]$(RESET)"
-			@echo ""
-			@echo "$(BLUE)Compiling files..."
+			@printf "$(GREEN)[philo_one done][✔]$(RESET)"
+			@printf "\n"
+			@printf "$(BLUE)Compiling files..."
 			@gcc ${FLAGS} ${OBJS_TWO} -o philo_two -lpthread
-			@echo "$(GREEN)[philo_two done][✔]$(RESET)"
-			@echo ""
-			@echo "$(BLUE)Compiling files..."
+			@printf "$(GREEN)[philo_two done][✔]$(RESET)"
+			@printf "\n"
+			@printf "$(BLUE)Compiling files..."
 			@gcc ${FLAGS} ${OBJS_THREE} -o philo_three -lpthread
-			@echo "$(GREEN)[philo_three done][✔]$(RESET)"
-			@echo ""
+			@printf "$(GREEN)[philo_three done][✔]$(RESET)"
+			@printf "\n"
 
 all:		${NAME}
 
 clean:
-			@echo ""
-			@echo "$(RED)Erase files '.o'"
+			@printf "\n"
+			@printf "$(RED)Erase files '.o'\n"
 			@rm -rf $(OBJS_ONE) $(OBJS_TWO) $(OBJS_THREE)
-			@echo "\033[0m"
+			@printf "\033[0m\n"
 
 fclean:
-			@echo ""
-			@echo "$(RED)Erase files '.o'"
+			@printf "\n"
+			@printf "$(RED)Erase files '.o'\n"
 			@rm -rf $(OBJS_ONE) $(OBJS_TWO) $(OBJS_THREE)
-			@echo "$(RED)Delete executable file and libft"
+			@printf "$(RED)Delete executable file and libft\n"
 			@rm -rf philo_one philo_two philo_three
-			@echo "$(RESET)"
+			@printf "$(RESET)\n"
 
 re:			fclean all
 
