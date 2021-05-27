@@ -6,7 +6,7 @@
 /*   By: vico <vico@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/13 06:27:40 by vico              #+#    #+#             */
-/*   Updated: 2021/05/27 05:03:47 by vico             ###   ########.fr       */
+/*   Updated: 2021/05/27 07:14:38 by vico             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,9 +53,9 @@ int		check_time(t_p *p, struct timeval *time_check)
 	if (c_cur >= c_ref)
 	{
 		sem_wait(p->phil->print);
-		sem_post(p->phil->dead);
 		p->each_eat = -1;
 		print_time(p, "died\n", 1);
+		sem_post(p->phil->dead);
 		return (1);
 	}
 	return (0);
