@@ -6,7 +6,7 @@
 /*   By: vico <vico@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/13 06:27:40 by vico              #+#    #+#             */
-/*   Updated: 2021/05/27 07:13:17 by vico             ###   ########.fr       */
+/*   Updated: 2021/05/27 07:25:10 by vico             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,8 +51,8 @@ int		check_time(t_p *p, struct timeval *time_check)
 	if (c_cur >= c_ref)
 	{
 		pthread_mutex_lock(&(p->beg->print));
-		p->each_eat = -1;
 		print_time(p, "died\n", 1);
+		p->each_eat = -1;
 		pthread_mutex_unlock(&(p->beg->dead));
 		return (1);
 	}
