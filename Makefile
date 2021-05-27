@@ -52,17 +52,13 @@ all:		${NAME}
 clean:
 			@echo ""
 			@echo "$(RED)Erase files '.o'"
-			@rm -rf $(OBJS_ONE)
-			@rm -rf $(OBJS_TWO)
-			@rm -rf $(OBJS_THREE)
+			@rm -rf $(OBJS_ONE) $(OBJS_TWO) $(OBJS_THREE)
 			@echo "\033[0m"
 
 fclean:
 			@echo ""
 			@echo "$(RED)Erase files '.o'"
-			@rm -rf $(OBJS_ONE)
-			@rm -rf $(OBJS_TWO)
-			@rm -rf $(OBJS_THREE)
+			@rm -rf $(OBJS_ONE) $(OBJS_TWO) $(OBJS_THREE)
 			@echo "$(RED)Delete executable file and libft"
 			@rm -rf philo_one philo_two philo_three
 			@echo "$(RESET)"
