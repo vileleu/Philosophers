@@ -7,60 +7,51 @@ ORANGE = 	\033[0;33m
 MAGENTA = 	\033[0;35m
 RESET = 	\033[0m
 
-SRCS_ONE	= $(wildcard srcs/philo_one/srcs/*.c)
+SRCS		= $(wildcard srcs/philo/srcs/*.c)
 
-SRCS_TWO	= $(wildcard srcs/philo_two/srcs/*.c)
+SRCS_BONUS	= $(wildcard srcs/philo_bonus/srcs/*.c)
 
-SRCS_THREE	= $(wildcard srcs/philo_three/srcs/*.c)
+OBJS		= ${SRCS:.c=.o}
 
-OBJS_ONE	= ${SRCS_ONE:.c=.o}
+OBJS_BONUS	= ${SRCS_BONUS:.c=.o}
 
-OBJS_TWO	= ${SRCS_TWO:.c=.o}
-
-OBJS_THREE	= ${SRCS_THREE:.c=.o}
 
 NAME			= philo
 
-HEADERS_ONE		= -I srcs/philo_one/includes/
+HEADERS			= -I srcs/philo/includes/
 
-HEADERS_TWO		= -I srcs/philo_two/includes/
-
-HEADERS_THREE	= -I srcs/philo_three/includes/
+HEADERS_BONUS	= -I srcs/philo_bonus/includes/
 
 FLAGS		= -Wall -Wextra -Werror
-
 .c.o:		
-			@gcc ${FLAGS} ${HEADERS} -c $< -o ${<:.c=.o} > /dev/null
+			@gcc ${FLAGS} ${HEADERS} ${HEADERS_BONUS} -c $< -o ${<:.c=.o} > /dev/null
 
-${NAME}:	${OBJS_ONE} ${OBJS_TWO} ${OBJS_THREE}
-			@printf "\n$(BLUE)"
-			@printf "$(BLUE)Compiling files..."
-			@gcc ${FLAGS} ${OBJS_ONE} -o philo_one -lpthread
-			@printf "$(GREEN)[philo_one done][✔]$(RESET)"
-			@printf "\n"
-			@printf "$(BLUE)Compiling files..."
-			@gcc ${FLAGS} ${OBJS_TWO} -o philo_two -lpthread
-			@printf "$(GREEN)[philo_two done][✔]$(RESET)"
-			@printf "\n"
-			@printf "$(BLUE)Compiling files..."
-			@gcc ${FLAGS} ${OBJS_THREE} -o philo_three -lpthread
-			@printf "$(GREEN)[philo_three done][✔]$(RESET)"
-			@printf "\n"
+${NAME}:	${OBJS}
+			@printf "$(BLUE)\nCompiling files..."
+			@gcc ${FLAGS} ${OBJS} -o philo -lpthread
+			@printf "$(GREEN)[philo done][✔]$(RESET)"
+			@printf "\n\n"
+
+bonus:		${OBJS_BONUS}
+			@printf "$(BLUE)\nCompiling files..."
+			@gcc ${FLAGS} ${OBJS_BONUS} -o philo_bonus -lpthread
+			@printf "$(GREEN)[philo_bonus done][✔]$(RESET)"
+			@printf "\n\n"
 
 all:		${NAME}
 
 clean:
 			@printf "\n"
 			@printf "$(RED)Erase files '.o'\n"
-			@rm -rf $(OBJS_ONE) $(OBJS_TWO) $(OBJS_THREE)
+			@rm -rf $(OBJS) $(OBJS_BONUS)
 			@printf "\033[0m\n"
 
 fclean:
 			@printf "\n"
 			@printf "$(RED)Erase files '.o'\n"
-			@rm -rf $(OBJS_ONE) $(OBJS_TWO) $(OBJS_THREE)
-			@printf "$(RED)Delete executable file and libft\n"
-			@rm -rf philo_one philo_two philo_three
+			@rm -rf $(OBJS) $(OBJS_BONUS)
+			@printf "$(RED)Delete executable\n"
+			@rm -rf philo philo_bonus
 			@printf "$(RESET)\n"
 
 re:			fclean all

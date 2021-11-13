@@ -6,11 +6,11 @@
 /*   By: vico <vico@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/13 06:27:40 by vico              #+#    #+#             */
-/*   Updated: 2021/05/27 07:27:05 by vico             ###   ########.fr       */
+/*   Updated: 2021/11/11 04:40:29 by vico             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/philo_two.h"
+#include "../includes/philo_bonus.h"
 
 void	print_time(t_p *p, char *prtf, int die)
 {
@@ -40,7 +40,7 @@ void	print_time(t_p *p, char *prtf, int die)
 		sem_post(p->phil->print);
 }
 
-int		check_time(t_p *p, struct timeval *time_check)
+int	check_time(t_p *p, struct timeval *time_check)
 {
 	int				c_cur;
 	int				c_ref;
@@ -66,21 +66,21 @@ void	*check_eat(void *arg)
 	t_p				*p;
 	struct timeval	time_check;
 
-	p = (t_p*)arg;
+	p = (t_p *)arg;
 	while (1)
 	{
-		sem_wait(p->phil->block);
+		pthread_mutex_lock(&(p->samet));
 		if (p->c_eat == 1)
 		{
 			gettimeofday(&time_check, NULL);
 			p->c_eat = 0;
 		}
 		else if (!p->c_eat && check_time(p, &time_check))
-			return ((void*)0);
-		sem_post(p->phil->block);
+			return ((void *)0);
+		pthread_mutex_unlock(&(p->samet));
 		usleep(100);
 	}
-	return ((void*)0);
+	return ((void *)0);
 }
 
 void	*actions(void *arg)
@@ -88,7 +88,7 @@ void	*actions(void *arg)
 	pthread_t	c_eat;
 	t_p			*p;
 
-	p = (t_p*)arg;
+	p = (t_p *)arg;
 	pthread_create(&c_eat, NULL, check_eat, p);
 	pthread_detach(c_eat);
 	while (1)
@@ -97,16 +97,17 @@ void	*actions(void *arg)
 		print_time(p, "has taken a fork\n", 0);
 		sem_wait(p->phil->fork);
 		print_time(p, "has taken a fork\n", 0);
-		p->c_eat = 2;
-		print_time(p, "is eating\n", 0);
-		usleep(p->t_eat * 1000);
+		pthread_mutex_lock(&(p->samet));
 		p->c_eat = 1;
-		p->each_eat++;
+		print_time(p, "is eating\n", 0);
+		pthread_mutex_unlock(&(p->samet));
+		sleep_better(p->t_eat);
+		sem_post(p->phil->eat);
 		sem_post(p->phil->fork);
 		sem_post(p->phil->fork);
 		print_time(p, "is sleeping\n", 0);
-		usleep(p->t_sleep * 1000);
+		sleep_better(p->t_sleep);
 		print_time(p, "is thinking\n", 0);
 	}
-	return ((void*)0);
+	return ((void *)0);
 }

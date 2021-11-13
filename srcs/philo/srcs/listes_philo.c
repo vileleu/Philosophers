@@ -6,11 +6,11 @@
 /*   By: vico <vico@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/10 21:17:50 by vico              #+#    #+#             */
-/*   Updated: 2021/05/27 04:46:19 by vico             ###   ########.fr       */
+/*   Updated: 2021/11/11 04:34:01 by vico             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/philo_one.h"
+#include "../includes/philo.h"
 
 void	init_phil(t_phil *phil, char **av)
 {
@@ -29,7 +29,7 @@ void	init_phil(t_phil *phil, char **av)
 	phil->time_ref.tv_usec /= 1000;
 }
 
-int		free_p(t_phil *phil)
+int	free_p(t_phil *phil)
 {
 	t_p	*tmp;
 
@@ -75,12 +75,11 @@ void	give_thread(t_phil *phil, t_p *tmp)
 	usleep(100);
 }
 
-int		loop_thread(t_phil *phil)
+int	loop_thread(t_phil *phil)
 {
 	t_p		*tmp;
 
 	tmp = phil->l;
-	pthread_mutex_init(&(phil->l->block), NULL);
 	pthread_mutex_init(&(phil->l->print), NULL);
 	pthread_mutex_init(&(phil->l->dead), NULL);
 	pthread_mutex_lock(&(phil->l->dead));
@@ -92,7 +91,7 @@ int		loop_thread(t_phil *phil)
 	return (1);
 }
 
-int		create_phil(t_phil *phil)
+int	create_phil(t_phil *phil)
 {
 	t_p		*tmp;
 
@@ -101,22 +100,17 @@ int		create_phil(t_phil *phil)
 		tmp = phil->l;
 		while (phil->l->next)
 			phil->l = phil->l->next;
-		if (!(phil->l->next = malloc(sizeof(t_p))))
+		phil->l->next = malloc(sizeof(t_p));
+		if (!(phil->l->next))
 			return (0);
 		pthread_mutex_init(&(phil->l->next->fork), NULL);
+		pthread_mutex_init(&(phil->l->next->samet), NULL);
 		phil->l->next->nb = phil->nb++;
 		phil->l->each_eat = 0;
 		phil->l->next->next = NULL;
 		phil->l = tmp;
 	}
 	else if (phil->l == NULL)
-	{
-		if (!(phil->l = malloc(sizeof(t_p))))
-			return (0);
-		pthread_mutex_init(&(phil->l->fork), NULL);
-		phil->l->nb = phil->nb++;
-		phil->l->each_eat = 0;
-		phil->l->next = NULL;
-	}
+		return (create_phil_bis(phil));
 	return (1);
 }

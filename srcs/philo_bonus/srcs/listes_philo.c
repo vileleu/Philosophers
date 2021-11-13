@@ -6,11 +6,11 @@
 /*   By: vico <vico@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/10 21:17:50 by vico              #+#    #+#             */
-/*   Updated: 2021/05/27 05:07:14 by vico             ###   ########.fr       */
+/*   Updated: 2021/11/11 04:42:55 by vico             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/philo_two.h"
+#include "../includes/philo_bonus.h"
 
 void	init_phil(t_phil *phil, char **av)
 {
@@ -25,16 +25,14 @@ void	init_phil(t_phil *phil, char **av)
 		phil->max_eat = ft_atoi(av[5]);
 }
 
-int		free_p(t_phil *phil)
+int	free_p(t_phil *phil)
 {
 	free(phil->phil);
 	return (0);
 }
 
-int		loop_thread(t_phil *phil, int i)
+int	loop_thread(t_phil *phil, int i)
 {
-	pthread_t	thrd;
-
 	phil->phil[i].phil = phil;
 	phil->phil[i].time_ref = phil->time_ref;
 	phil->phil[i].p_nb = phil->p_nb;
@@ -44,33 +42,47 @@ int		loop_thread(t_phil *phil, int i)
 	phil->phil[i].t_sleep = phil->t_sleep;
 	phil->phil[i].c_eat = 1;
 	phil->phil[i].each_eat = 0;
-	pthread_create(&(thrd), NULL, actions, &(phil->phil[i]));
-	pthread_detach(thrd);
+	pthread_mutex_init(&(phil->phil[i].samet), NULL);
+	phil->phil[i].proc = fork();
+	if (phil->phil[i].proc == 0)
+	{
+		actions(&(phil->phil[i]));
+		exit(EXIT_SUCCESS);
+	}
 	usleep(100);
 	return (1);
 }
 
-int		launch_phil(t_phil *phil)
+int	launch_phil_bis(t_phil *phil)
 {
 	int	i;
 
 	i = -1;
-	if (!(phil->phil = (t_p*)malloc(sizeof(t_p) * phil->p_nb)))
-		return (malloc_err());
-	sem_unlink(FORK);
-	if ((phil->fork = sem_open(FORK, O_CREAT | O_EXCL, 0644, phil->p_nb)) < \
-	(sem_t*)0)
-		return (sem_err());
-	sem_unlink(BLOCK);
-	if ((phil->block = sem_open(BLOCK, O_CREAT | O_EXCL, 0644, 1)) < (sem_t*)0)
-		return (sem_err());
-	sem_unlink(PRINT);
-	if ((phil->print = sem_open(PRINT, O_CREAT | O_EXCL, 0644, 1)) < (sem_t*)0)
-		return (sem_err());
-	sem_unlink(DEAD);
-	if ((phil->dead = sem_open(DEAD, O_CREAT | O_EXCL, 0644, 0)) < (sem_t*)0)
+	phil->dead = sem_open(DEAD, O_CREAT | O_EXCL, 0644, 0);
+	if (phil->dead < (sem_t *)0)
 		return (sem_err());
 	while (++i < phil->p_nb)
 		loop_thread(phil, i);
 	return (1);
+}
+
+int	launch_phil(t_phil *phil)
+{
+	phil->phil = (t_p *)malloc(sizeof(t_p) * phil->p_nb);
+	if (!(phil->phil))
+		return (malloc_err());
+	sem_unlink(FORK);
+	phil->fork = sem_open(FORK, O_CREAT | O_EXCL, 0644, phil->p_nb);
+	if (phil->fork < (sem_t *)0)
+		return (sem_err());
+	sem_unlink(PRINT);
+	phil->print = sem_open(PRINT, O_CREAT | O_EXCL, 0644, 1);
+	if (phil->print < (sem_t *)0)
+		return (sem_err());
+	sem_unlink(EAT);
+	phil->eat = sem_open(EAT, O_CREAT | O_EXCL, 0644, 0);
+	if (phil->eat < (sem_t *)0)
+		return (sem_err());
+	sem_unlink(DEAD);
+	return (launch_phil_bis(phil));
 }

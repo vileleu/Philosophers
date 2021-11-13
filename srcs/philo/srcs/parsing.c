@@ -6,16 +6,33 @@
 /*   By: vico <vico@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/10 21:09:15 by vico              #+#    #+#             */
-/*   Updated: 2021/05/27 05:02:52 by vico             ###   ########.fr       */
+/*   Updated: 2021/11/05 20:56:31 by vico             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/philo_two.h"
+#include "../includes/philo.h"
 
-int		max_min(char **av, char *max, char *min)
+long	current_time(void)
 {
-	int	i;
-	int	j;
+	struct timeval	time;
+
+	gettimeofday(&time, NULL);
+	return ((time.tv_sec * 1000) +(time.tv_usec / 1000));
+}
+
+void	sleep_better(long sleep)
+{
+	long	max;
+
+	max = sleep + current_time();
+	while (max > current_time())
+		usleep(10);
+}
+
+int	max_min(char **av, char *max, char *min)
+{
+	int		i;
+	int		j;
 
 	i = -1;
 	while (av[++i])
@@ -41,7 +58,7 @@ int		max_min(char **av, char *max, char *min)
 	return (1);
 }
 
-int		little_parsing(int ac, char **av)
+int	little_parsing(int ac, char **av)
 {
 	int		i;
 	int		j;
